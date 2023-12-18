@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/obnahsgnaw/application v0.15.14
+	github.com/obnahsgnaw/application v0.15.16
 )
 
 require (
