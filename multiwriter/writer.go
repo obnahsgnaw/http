@@ -12,8 +12,14 @@ func New(w ...io.Writer) io.Writer {
 	if len(w) == 0 {
 		return nil
 	}
+	var ww []io.Writer
+	for _, o := range w {
+		if o != nil {
+			ww = append(ww, o)
+		}
+	}
 	return &MultiWriter{
-		w: w,
+		w: ww,
 	}
 }
 
