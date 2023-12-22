@@ -12,8 +12,11 @@ func main() {
 		LogDebug: true,
 	})
 
-	log.Println("server start...")
 	//log.Fatal(e.Run(":9000"))
-	pe := http.NewPortedEngine(e, url.Host{Port: 9000})
+	host := url.Host{Ip: "127.0.0.1", Port: 9000}
+	//pe := http.NewPortedEngine(e, host)
+	l, _ := http.NewListener(host)
+	pe := http.NewListenerEngine(e, host, l)
+	log.Println("server start...")
 	log.Fatal(pe.Run())
 }
