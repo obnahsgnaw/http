@@ -1,4 +1,4 @@
-package http
+package engine
 
 import (
 	"fmt"
@@ -22,6 +22,7 @@ type Config struct {
 	TrustedProxies []string
 	Cors           *cors.Config
 	LogCnf         *logger.Config
+	DefFavicon     bool
 }
 
 func New(cnf *Config) (*gin.Engine, error) {
@@ -49,18 +50,18 @@ func New(cnf *Config) (*gin.Engine, error) {
 	} else {
 		gin.ForceConsoleColor()
 	}
+
 	r := gin.New()
-
-	r.GET("/favicon.ico", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-	})
-
+	if cnf.DefFavicon {
+		r.GET("/favicon.ico", func(c *gin.Context) {
+			c.Status(http.StatusOK)
+		})
+	}
 	if len(cnf.TrustedProxies) > 0 {
 		if err := r.SetTrustedProxies(cnf.TrustedProxies); err != nil {
 			return nil, err
 		}
 	}
-
 	if cnf.AccessWriter != nil {
 		r.Use(gin.LoggerWithConfig(gin.LoggerConfig{
 			Formatter: func(param gin.LogFormatterParams) string {
@@ -87,7 +88,6 @@ func New(cnf *Config) (*gin.Engine, error) {
 	} else {
 		r.Use(gin.Recovery())
 	}
-
 	if cnf.Cors != nil {
 		r.Use(corsmid.New(func() *cors.Config {
 			return cnf.Cors
