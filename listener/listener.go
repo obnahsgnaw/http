@@ -18,8 +18,8 @@ func New(network string, host url.Host) (*PortedListener, error) {
 		network = "tcp"
 	}
 	if host.Ip == "" {
-		if ip, err := utils.GetLocalIp(); err != nil {
-			return nil, err
+		if ip, err := utils.GetLocalIp(); err != nil || ip == "" {
+			return nil, errors.New("ip is required")
 		} else {
 			host.Ip = ip
 		}
@@ -60,4 +60,8 @@ func (s *PortedListener) Ip() string {
 
 func (s *PortedListener) Port() int {
 	return s.h.Port
+}
+
+func (s *PortedListener) Close() {
+	_ = s.l.Close()
 }
