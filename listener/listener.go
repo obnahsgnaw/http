@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/obnahsgnaw/application/pkg/url"
 	"github.com/obnahsgnaw/application/pkg/utils"
+	"github.com/soheilhy/cmux"
 	"net"
 	"strconv"
 )
@@ -11,6 +12,7 @@ import (
 type PortedListener struct {
 	l net.Listener
 	h url.Host
+	m cmux.CMux
 }
 
 func New(network string, host url.Host) (*PortedListener, error) {
@@ -35,6 +37,7 @@ func New(network string, host url.Host) (*PortedListener, error) {
 	return &PortedListener{
 		l: l,
 		h: host,
+		m: cmux.New(l),
 	}, nil
 }
 
@@ -50,8 +53,20 @@ func (s *PortedListener) Listener() net.Listener {
 	return s.l
 }
 
+func (s *PortedListener) Http1Listener() net.Listener {
+	return s.m.Match(cmux.HTTP1Fast())
+}
+
+func (s *PortedListener) GrpcListener() net.Listener {
+	return s.m.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
+}
+
 func (s *PortedListener) Host() url.Host {
 	return s.h
+}
+
+func (s *PortedListener) Serve() error {
+	return s.m.Serve()
 }
 
 func (s *PortedListener) Ip() string {

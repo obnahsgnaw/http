@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/obnahsgnaw/application/pkg/url"
 	"github.com/obnahsgnaw/http"
 	"github.com/obnahsgnaw/http/engine"
 	"log"
+	http2 "net/http"
 )
 
 func main() {
@@ -12,7 +14,10 @@ func main() {
 		Name:     "test",
 		LogDebug: true,
 	})
-
+	e.ReusedPort()
+	e.Engine().GET("/b", func(context *gin.Context) {
+		context.String(http2.StatusOK, "ok")
+	})
 	log.Println("http server start...")
-	log.Fatal(e.Run())
+	e.RunAndServ()
 }
