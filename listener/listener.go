@@ -49,11 +49,11 @@ func (s *PortedListener) Network() string {
 	return s.l.Addr().Network()
 }
 
-func (s *PortedListener) Listener() net.Listener {
+func (s *PortedListener) RawListener() net.Listener {
 	return s.l
 }
 
-func (s *PortedListener) Http1Listener() net.Listener {
+func (s *PortedListener) HttpListener() net.Listener {
 	return s.m.Match(cmux.HTTP1Fast())
 }
 

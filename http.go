@@ -8,9 +8,8 @@ import (
 )
 
 type Http struct {
-	e          *gin.Engine
-	l          *listener.PortedListener
-	reusedPort bool
+	e *gin.Engine
+	l *listener.PortedListener
 }
 
 func New(e *gin.Engine, l *listener.PortedListener) *Http {
@@ -39,21 +38,14 @@ func (s *Http) Serve() error {
 }
 
 func (s *Http) Run() error {
-	if s.reusedPort {
-		return s.e.RunListener(s.l.Http1Listener())
-	}
-	return s.e.RunListener(s.l.Listener())
+	return s.e.RunListener(s.l.HttpListener())
 }
 
 func (s *Http) RunAndServ() (err error) {
-	if s.reusedPort {
-		go func() {
-			err = s.Run()
-		}()
-		err = s.Serve()
-	} else {
+	go func() {
 		err = s.Run()
-	}
+	}()
+	err = s.Serve()
 	return
 }
 
@@ -75,8 +67,4 @@ func (s *Http) Ip() string {
 
 func (s *Http) Port() int {
 	return s.l.Host().Port
-}
-
-func (s *Http) ReusedPort() {
-	s.reusedPort = true
 }

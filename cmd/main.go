@@ -14,7 +14,6 @@ func main() {
 		Name:     "test",
 		LogDebug: true,
 	})
-	e.ReusedPort()
 	e.Engine().GET("/b", func(context *gin.Context) {
 		context.String(http2.StatusOK, "ok")
 	})
