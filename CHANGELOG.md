@@ -1,4 +1,12 @@
 
+<a name="v0.1.2"></a>
+## [v0.1.2](https://8.140.161.172/wangsb/wgateway/compare/v0.1.1...v0.1.2) (2023-12-27)
+
+### Bug Fixes
+
+* **http:** fix listener reuse
+
+
 <a name="v0.1.1"></a>
 ## [v0.1.1](https://8.140.161.172/wangsb/wgateway/compare/v0.1.0...v0.1.1) (2023-12-22)
 
