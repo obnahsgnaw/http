@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/obnahsgnaw/application v0.15.16
+	github.com/soheilhy/cmux v0.1.5
 )
 
 require (
