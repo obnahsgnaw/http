@@ -1,4 +1,8 @@
 
+<a name="v0.1.6"></a>
+## [v0.1.6](https://8.140.161.172/wangsb/wgateway/compare/v0.1.5...v0.1.6) (2024-02-27)
+
+
 <a name="v0.1.5"></a>
 ## [v0.1.5](https://8.140.161.172/wangsb/wgateway/compare/v0.1.4...v0.1.5) (2023-12-29)
 
