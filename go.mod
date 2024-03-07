@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/obnahsgnaw/application v0.16.7
+	github.com/obnahsgnaw/application v0.16.8
 	github.com/soheilhy/cmux v0.1.5
 )
 
