@@ -63,3 +63,7 @@ func (s *Http) Ip() string {
 func (s *Http) Port() int {
 	return s.l.Port()
 }
+
+func (s *Http) Host() string {
+	return s.l.Host()
+}

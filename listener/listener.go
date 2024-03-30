@@ -69,6 +69,10 @@ func (s *PortedListener) Port() int {
 	return s.port
 }
 
+func (s *PortedListener) Host() string {
+	return s.Ip() + ":" + strconv.Itoa(s.Port())
+}
+
 func (s *PortedListener) Close() {
 	_ = s.l.Close()
 }
