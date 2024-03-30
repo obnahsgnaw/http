@@ -2,47 +2,43 @@ package listener
 
 import (
 	"errors"
-	"github.com/obnahsgnaw/application/pkg/url"
-	"github.com/obnahsgnaw/application/pkg/utils"
 	"github.com/soheilhy/cmux"
 	"net"
 	"strconv"
 )
 
 type PortedListener struct {
-	l net.Listener
-	h url.Host
-	m cmux.CMux
+	m    cmux.CMux
+	l    net.Listener
+	ip   string
+	port int
 }
 
-func New(network string, host url.Host) (*PortedListener, error) {
+func New(network string, ip string, port int) (*PortedListener, error) {
 	if network == "" {
 		network = "tcp"
 	}
-	if host.Ip == "" {
-		if ip, err := utils.GetLocalIp(); err != nil || ip == "" {
-			return nil, errors.New("ip is required")
-		} else {
-			host.Ip = ip
-		}
+	if ip == "" {
+		return nil, errors.New("ip is required")
 	}
-	if host.Port <= 0 {
+	if port <= 0 {
 		return nil, errors.New("port is required")
 	}
-	l, err := net.Listen(network, ":"+strconv.Itoa(host.Port))
+	l, err := net.Listen(network, ":"+strconv.Itoa(port))
 	if err != nil {
 		return nil, errors.New("listener listen failed, err=" + err.Error())
 	}
 
 	return &PortedListener{
-		l: l,
-		h: host,
-		m: cmux.New(l),
+		m:    cmux.New(l),
+		l:    l,
+		ip:   ip,
+		port: port,
 	}, nil
 }
 
-func Default(host url.Host) (*PortedListener, error) {
-	return New("tcp", host)
+func Default(ip string, port int) (*PortedListener, error) {
+	return New("tcp", ip, port)
 }
 
 func (s *PortedListener) Network() string {
@@ -61,20 +57,16 @@ func (s *PortedListener) GrpcListener() net.Listener {
 	return s.m.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
 }
 
-func (s *PortedListener) Host() url.Host {
-	return s.h
-}
-
 func (s *PortedListener) Serve() error {
 	return s.m.Serve()
 }
 
 func (s *PortedListener) Ip() string {
-	return s.h.Ip
+	return s.ip
 }
 
 func (s *PortedListener) Port() int {
-	return s.h.Port
+	return s.port
 }
 
 func (s *PortedListener) Close() {

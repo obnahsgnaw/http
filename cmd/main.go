@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/obnahsgnaw/application/pkg/url"
 	"github.com/obnahsgnaw/http"
 	"github.com/obnahsgnaw/http/engine"
 	"log"
@@ -10,9 +9,8 @@ import (
 )
 
 func main() {
-	e, err := http.Default(url.Host{Ip: "127.0.0.1", Port: 9011}, &engine.Config{
-		Name:     "test",
-		LogDebug: true,
+	e, err := http.Default("127.0.0.1", 9011, &engine.Config{
+		Name: "test",
 	})
 	if err != nil {
 		log.Fatal(err.Error())
