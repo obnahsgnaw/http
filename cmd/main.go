@@ -10,10 +10,13 @@ import (
 )
 
 func main() {
-	e, _ := http.Default(url.Host{Ip: "127.0.0.1", Port: 9000}, &engine.Config{
+	e, err := http.Default(url.Host{Ip: "127.0.0.1", Port: 9011}, &engine.Config{
 		Name:     "test",
 		LogDebug: true,
 	})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 	e.Engine().GET("/b", func(context *gin.Context) {
 		context.String(http2.StatusOK, "ok")
 	})
