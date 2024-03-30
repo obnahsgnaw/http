@@ -2,7 +2,6 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/obnahsgnaw/application/pkg/url"
 	"github.com/obnahsgnaw/http/engine"
 	"github.com/obnahsgnaw/http/listener"
 )
@@ -19,7 +18,7 @@ func New(e *gin.Engine, l *listener.PortedListener) *Http {
 	}
 }
 
-func Default(host url.Host, config *engine.Config) (*Http, error) {
+func Default(ip string, port int, config *engine.Config) (*Http, error) {
 	var e *gin.Engine
 	var l *listener.PortedListener
 	var err error
@@ -27,7 +26,7 @@ func Default(host url.Host, config *engine.Config) (*Http, error) {
 	if e, err = engine.New(config); err != nil {
 		return nil, err
 	}
-	if l, err = listener.Default(host); err != nil {
+	if l, err = listener.Default(ip, port); err != nil {
 		return nil, err
 	}
 	return New(e, l), nil
@@ -57,14 +56,10 @@ func (s *Http) Listener() *listener.PortedListener {
 	return s.l
 }
 
-func (s *Http) Host() url.Host {
-	return s.l.Host()
-}
-
 func (s *Http) Ip() string {
-	return s.l.Host().Ip
+	return s.l.Ip()
 }
 
 func (s *Http) Port() int {
-	return s.l.Host().Port
+	return s.l.Port()
 }
