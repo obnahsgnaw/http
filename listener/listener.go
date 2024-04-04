@@ -2,16 +2,18 @@ package listener
 
 import (
 	"errors"
+	"fmt"
 	"github.com/soheilhy/cmux"
 	"net"
 	"strconv"
 )
 
 type PortedListener struct {
-	m    cmux.CMux
-	l    net.Listener
-	ip   string
-	port int
+	m        cmux.CMux
+	l        net.Listener
+	ip       string
+	port     int
+	startKey string
 }
 
 func New(network string, ip string, port int) (*PortedListener, error) {
@@ -26,7 +28,7 @@ func New(network string, ip string, port int) (*PortedListener, error) {
 	}
 	l, err := net.Listen(network, ":"+strconv.Itoa(port))
 	if err != nil {
-		return nil, errors.New("listener listen failed, err=" + err.Error())
+		return nil, fmt.Errorf("listener listen failed: %w", err)
 	}
 
 	return &PortedListener{
@@ -57,8 +59,15 @@ func (s *PortedListener) GrpcListener() net.Listener {
 	return s.m.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
 }
 
-func (s *PortedListener) Serve() error {
-	return s.m.Serve()
+func (s *PortedListener) Serve(key string) error {
+	if s.startKey != "" {
+		return nil
+	}
+	err := s.m.Serve()
+	if err == nil {
+		s.startKey = key
+	}
+	return err
 }
 
 func (s *PortedListener) Ip() string {
@@ -73,6 +82,10 @@ func (s *PortedListener) Host() string {
 	return s.Ip() + ":" + strconv.Itoa(s.Port())
 }
 
-func (s *PortedListener) Close() {
+func (s *PortedListener) Close(key string) {
+	if key != s.startKey {
+		return
+	}
+	s.m.Close()
 	_ = s.l.Close()
 }
