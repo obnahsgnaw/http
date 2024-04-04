@@ -9,7 +9,7 @@ import (
 type Http struct {
 	e      *gin.Engine
 	l      *listener.PortedListener
-	runKey string
+	runKey string // for refuse multi run and close
 }
 
 func New(e *gin.Engine, l *listener.PortedListener) *Http {
@@ -33,11 +33,19 @@ func Default(ip string, port int, config *engine.Config) (*Http, error) {
 	return New(e, l), nil
 }
 
-func (s *Http) Serve(key string) error {
-	return s.l.Serve(key)
+func (s *Http) Serve() error {
+	return s.l.Serve()
 }
 
-func (s *Http) Run(key string) error {
+func (s *Http) ServeWithKey(key string) error {
+	return s.l.ServeWithKey(key)
+}
+
+func (s *Http) Run() error {
+	return s.e.RunListener(s.l.HttpListener())
+}
+
+func (s *Http) RunWithKey(key string) error {
 	if s.runKey != "" {
 		return nil
 	}
@@ -48,23 +56,35 @@ func (s *Http) Run(key string) error {
 	return err
 }
 
-func (s *Http) RunAndServ(key string, cb func(error)) {
+func (s *Http) RunAndServ() (err error) {
 	go func() {
-		if err := s.Run(key); err != nil {
+		err = s.Run()
+	}()
+	err = s.Serve()
+	return
+}
+
+func (s *Http) RunAndServWithKey(key string, cb func(error)) {
+	go func() {
+		if err := s.RunWithKey(key); err != nil {
 			cb(err)
 		}
 	}()
-	if err := s.Serve(key); err != nil {
+	if err := s.ServeWithKey(key); err != nil {
 		cb(err)
 	}
 	return
 }
 
-func (s *Http) Close(key string) {
+func (s *Http) Close() {
+	s.l.Close()
+}
+
+func (s *Http) CloseWithKey(key string) {
 	if key != s.runKey {
 		return
 	}
-	s.l.Close(key)
+	s.l.CloseWithKey(key)
 }
 
 func (s *Http) Engine() *gin.Engine {

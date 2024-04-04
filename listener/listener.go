@@ -59,7 +59,10 @@ func (s *PortedListener) GrpcListener() net.Listener {
 	return s.m.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
 }
 
-func (s *PortedListener) Serve(key string) error {
+func (s *PortedListener) Serve() error {
+	return s.m.Serve()
+}
+func (s *PortedListener) ServeWithKey(key string) error {
 	if s.startKey != "" {
 		return nil
 	}
@@ -82,7 +85,11 @@ func (s *PortedListener) Host() string {
 	return s.Ip() + ":" + strconv.Itoa(s.Port())
 }
 
-func (s *PortedListener) Close(key string) {
+func (s *PortedListener) Close() {
+	_ = s.l.Close()
+}
+
+func (s *PortedListener) CloseWithKey(key string) {
 	if key != s.startKey {
 		return
 	}
