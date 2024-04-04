@@ -15,12 +15,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	defer e.Close("123")
+	defer e.Close()
 	e.Engine().GET("/b", func(context *gin.Context) {
 		context.String(http2.StatusOK, "ok")
 	})
 	log.Println("http server start...")
-	e.RunAndServ("123", func(err error) {
-
-	})
+	e.RunAndServ()
 }
