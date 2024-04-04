@@ -1,4 +1,12 @@
 
+<a name="v0.2.4"></a>
+## [v0.2.4](https://8.140.161.172/wangsb/wgateway/compare/v0.2.3...v0.2.4) (2024-04-04)
+
+### Features
+
+* **all:** start key
+
+
 <a name="v0.2.3"></a>
 ## [v0.2.3](https://8.140.161.172/wangsb/wgateway/compare/v0.2.2...v0.2.3) (2024-03-30)
 
