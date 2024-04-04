@@ -85,6 +85,7 @@ func (s *Http) CloseWithKey(key string) {
 		return
 	}
 	s.l.CloseWithKey(key)
+	s.runKey = ""
 }
 
 func (s *Http) Engine() *gin.Engine {

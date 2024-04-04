@@ -95,4 +95,5 @@ func (s *PortedListener) CloseWithKey(key string) {
 	}
 	s.m.Close()
 	_ = s.l.Close()
+	s.startKey = ""
 }
