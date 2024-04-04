@@ -7,8 +7,9 @@ import (
 )
 
 type Http struct {
-	e *gin.Engine
-	l *listener.PortedListener
+	e      *gin.Engine
+	l      *listener.PortedListener
+	runKey string
 }
 
 func New(e *gin.Engine, l *listener.PortedListener) *Http {
@@ -32,20 +33,38 @@ func Default(ip string, port int, config *engine.Config) (*Http, error) {
 	return New(e, l), nil
 }
 
-func (s *Http) Serve() error {
-	return s.l.Serve()
+func (s *Http) Serve(key string) error {
+	return s.l.Serve(key)
 }
 
-func (s *Http) Run() error {
-	return s.e.RunListener(s.l.HttpListener())
+func (s *Http) Run(key string) error {
+	if s.runKey != "" {
+		return nil
+	}
+	err := s.e.RunListener(s.l.HttpListener())
+	if err == nil {
+		s.runKey = key
+	}
+	return err
 }
 
-func (s *Http) RunAndServ() (err error) {
+func (s *Http) RunAndServ(key string, cb func(error)) {
 	go func() {
-		err = s.Run()
+		if err := s.Run(key); err != nil {
+			cb(err)
+		}
 	}()
-	err = s.Serve()
+	if err := s.Serve(key); err != nil {
+		cb(err)
+	}
 	return
+}
+
+func (s *Http) Close(key string) {
+	if key != s.runKey {
+		return
+	}
+	s.l.Close(key)
 }
 
 func (s *Http) Engine() *gin.Engine {
