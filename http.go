@@ -7,9 +7,10 @@ import (
 )
 
 type Http struct {
-	e      *gin.Engine
-	l      *listener.PortedListener
-	runKey string // for refuse multi run and close
+	e            *gin.Engine
+	l            *listener.PortedListener
+	runKey       string // for refuse multi run and close
+	initializers []func() error
 }
 
 func New(e *gin.Engine, l *listener.PortedListener) *Http {
@@ -42,6 +43,11 @@ func (s *Http) ServeWithKey(key string) error {
 }
 
 func (s *Http) Run() error {
+	for _, fn := range s.initializers {
+		if err := fn(); err != nil {
+			return err
+		}
+	}
 	return s.e.RunListener(s.l.HttpListener())
 }
 
@@ -49,7 +55,7 @@ func (s *Http) RunWithKey(key string) error {
 	if s.runKey != "" {
 		return nil
 	}
-	err := s.e.RunListener(s.l.HttpListener())
+	err := s.Run()
 	if err == nil {
 		s.runKey = key
 	}
@@ -106,4 +112,8 @@ func (s *Http) Port() int {
 
 func (s *Http) Host() string {
 	return s.l.Host()
+}
+
+func (s *Http) AddInitializer(initializer func() error) {
+	s.initializers = append(s.initializers, initializer)
 }
