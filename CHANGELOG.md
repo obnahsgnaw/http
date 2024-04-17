@@ -1,4 +1,12 @@
 
+<a name="v0.2.7"></a>
+## [v0.2.7](https://8.140.161.172/wangsb/wgateway/compare/v0.2.6...v0.2.7) (2024-04-17)
+
+### Features
+
+* **http:** added initializer before run
+
+
 <a name="v0.2.6"></a>
 ## [v0.2.6](https://8.140.161.172/wangsb/wgateway/compare/v0.2.5...v0.2.6) (2024-04-04)
 
