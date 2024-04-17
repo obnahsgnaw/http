@@ -6,9 +6,11 @@ import (
 	"github.com/soheilhy/cmux"
 	"net"
 	"strconv"
+	"sync"
 )
 
 type PortedListener struct {
+	lc       sync.Mutex
 	m        cmux.CMux
 	l        net.Listener
 	ip       string
@@ -63,12 +65,15 @@ func (s *PortedListener) Serve() error {
 	return s.m.Serve()
 }
 func (s *PortedListener) ServeWithKey(key string) error {
+	s.lc.Lock()
+	defer s.lc.Unlock()
 	if s.startKey != "" {
 		return nil
 	}
+	s.startKey = key
 	err := s.m.Serve()
-	if err == nil {
-		s.startKey = key
+	if err != nil {
+		s.startKey = ""
 	}
 	return err
 }
