@@ -4,9 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/obnahsgnaw/http/engine"
 	"github.com/obnahsgnaw/http/listener"
+	"sync"
 )
 
 type Http struct {
+	lc           sync.Mutex
 	e            *gin.Engine
 	l            *listener.PortedListener
 	runKey       string // for refuse multi run and close
@@ -52,12 +54,15 @@ func (s *Http) Run() error {
 }
 
 func (s *Http) RunWithKey(key string) error {
+	s.lc.Lock()
+	defer s.lc.Unlock()
 	if s.runKey != "" {
 		return nil
 	}
+	s.runKey = key
 	err := s.Run()
-	if err == nil {
-		s.runKey = key
+	if err != nil {
+		s.runKey = ""
 	}
 	return err
 }
