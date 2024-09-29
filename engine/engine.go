@@ -46,8 +46,9 @@ func New(cnf *Config) (*gin.Engine, error) {
 	if cnf.AccessWriter != nil {
 		r.Use(gin.LoggerWithConfig(gin.LoggerConfig{
 			Formatter: func(param gin.LogFormatterParams) string {
-				return fmt.Sprintf("[ %s ] - %s %s %s %s %d %s %v %s %s\n",
+				return fmt.Sprintf("[ %s ] - %s %s %s %s %s %d %s %v %s %s\n",
 					param.TimeStamp.Format(time.RFC3339),
+					param.Request.Header.Get("X-Request-ID"),
 					param.ClientIP,
 					param.Method,
 					cnf.Name,

@@ -4,8 +4,8 @@ import "strings"
 
 var (
 	AllowMethods  = []string{"OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"}
-	AllowHeaders  = []string{"Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "Language", "Request-Origin", "X-App-Id", "X-Security-Sign", "X-Security-Iv"}
-	ExposeHeaders = []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Cache-Control", "Content-Language", "Content-Type", "X-App-Id", "X-Security-Sign", "X-Security-Iv"}
+	AllowHeaders  = []string{"Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "Language", "Request-Origin", "X-App-Id", "X-Security-Sign", "X-Security-Iv", "X-Request-Id"}
+	ExposeHeaders = []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Cache-Control", "Content-Language", "Content-Type", "X-App-Id", "X-Security-Sign", "X-Security-Iv", "X-Request-Id"}
 )
 
 type Config struct {
