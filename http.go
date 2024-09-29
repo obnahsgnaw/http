@@ -13,6 +13,7 @@ type Http struct {
 	l            *listener.PortedListener
 	runKey       string // for refuse multi run and close
 	initializers []func() error
+	config       *engine.Config
 }
 
 func New(e *gin.Engine, l *listener.PortedListener) *Http {
@@ -33,7 +34,9 @@ func Default(ip string, port int, config *engine.Config) (*Http, error) {
 	if l, err = listener.Default(ip, port); err != nil {
 		return nil, err
 	}
-	return New(e, l), nil
+	s := New(e, l)
+	s.config = config
+	return s, nil
 }
 
 func (s *Http) Serve() error {
@@ -121,4 +124,8 @@ func (s *Http) Host() string {
 
 func (s *Http) AddInitializer(initializer func() error) {
 	s.initializers = append(s.initializers, initializer)
+}
+
+func (s *Http) Config() *engine.Config {
+	return s.config
 }
